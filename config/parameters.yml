@@ -1,0 +1,4 @@
+parameters:
+  downloader_list:
+    dilbert: App\Downloader\Dilbert\Downloader
+

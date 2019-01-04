@@ -1,0 +1,15 @@
+imports:
+  - { resource: "config/parameters.yml" }
+
+services:
+  downloader.factory:
+    class: App\Downloader\Services\Factory
+    arguments:
+      - '%downloader_list%'
+
+  command.download:
+    class: App\Command\DownloadCommand
+    arguments:
+      - "@downloader.factory"
+    tags:
+      - { name: "console.command" }
