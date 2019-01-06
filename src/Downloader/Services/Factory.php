@@ -6,6 +6,10 @@ use App\Downloader\DownloaderNotFoundException;
 use GuzzleHttp\Client;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Serializer\Encoder\JsonDecode;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Serializer;
 
 class Factory
 {
@@ -35,6 +39,13 @@ class Factory
 
         $class = $this->downloaderList[$downloaderName];
 
-        return new $class(new Client(), $output, new Filesystem());
+        switch ($downloaderName)
+        {
+            case 'xkcd':
+                return new $class(new Client(), $output, new Filesystem(), new Serializer([new ObjectNormalizer()], [new JsonDecode(), new JsonEncoder()]));
+                break;
+            default:
+                return new $class(new Client(), $output, new Filesystem());
+        }
     }
 }
