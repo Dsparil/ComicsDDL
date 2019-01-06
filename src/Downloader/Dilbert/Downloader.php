@@ -2,37 +2,51 @@
 namespace App\Downloader\Dilbert;
 
 use App\Downloader\AbstractDownloader;
+use App\Downloader\Traits\DateBoundariesTrait;
 use GuzzleHttp\Exception\GuzzleException;
 
 class Downloader extends AbstractDownloader
 {
+    use DateBoundariesTrait;
+
     const URL = 'https://dilbert.com/strip';
 
     const OLDEST_DATE = '1989-04-16';
 
+    public function setBoundaries($boundaryStart, $boundaryEnd)
+    {
+        $this->convertAndCheckDates($boundaryStart, $boundaryEnd);
+
+        $this->boundaryStart = $boundaryStart;
+        $this->boundaryEnd   = $boundaryEnd;
+
+        if ($this->boundaryEnd === null)
+        {
+            $this->boundaryEnd = new \DateTime();
+        }
+
+        if ($this->boundaryStart === null)
+        {
+            $this->boundaryStart = new \DateTime(self::OLDEST_DATE);
+        }
+    }
+
     /**
      * {@inheritdoc}
      */
-    public function process(\DateTimeInterface $dateBegin = null, \DateTimeInterface $dateEnd = null)
+    public function process()
     {
-        if ($dateEnd === null)
-        {
-            $dateEnd = new \DateTime();
-        }
-
-        if ($dateBegin === null)
-        {
-            $dateBegin = new \DateTime(self::OLDEST_DATE);
-        }
+        $dateStart = $this->boundaryStart;
+        $dateEnd   = $this->boundaryEnd;
 
         $step = new \DateInterval('P1D');
 
         do
         {
-            $this->getStripForDate($dateBegin);
-            $dateBegin->add($step);
+            $this->getStripForDate($dateStart);
+            $dateStart->add($step);
         }
-        while ($dateBegin <= $dateEnd);
+        while ($dateStart <= $dateEnd);
     }
 
     /**

@@ -5,7 +5,7 @@ use GuzzleHttp\Client;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
-abstract class AbstractDownloader
+abstract class AbstractDownloader implements DownloaderInterface
 {
     /** @var Client */
     protected $client;
@@ -15,6 +15,10 @@ abstract class AbstractDownloader
 
     /** @var Filesystem */
     protected $filesystem;
+
+    protected $boundaryStart;
+
+    protected $boundaryEnd;
 
     /**
      * @param Client $client
@@ -27,10 +31,4 @@ abstract class AbstractDownloader
         $this->output     = $output;
         $this->filesystem = $filesystem;
     }
-
-    /**
-     * @param \DateTimeInterface|null $dateBegin
-     * @param \DateTimeInterface|null $dateEnd
-     */
-    abstract public function process(\DateTimeInterface $dateBegin = null, \DateTimeInterface $dateEnd = null);
 }
