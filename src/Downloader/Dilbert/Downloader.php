@@ -58,6 +58,12 @@ class Downloader extends AbstractDownloader
 
         try
         {
+            if ($this->exists($date))
+            {
+                $this->output->write('Skipped.', true);
+                return;
+            }
+
             $url    = sprintf('%s/%s', self::URL, $date->format('Y-m-d'));
             $result = $this->client->request('GET', $url);
 
@@ -89,10 +95,11 @@ class Downloader extends AbstractDownloader
     }
 
     /**
-     * @param $imageUrl
      * @param \DateTimeInterface $date
+     * @param string $path
+     * @param string $fileName
      */
-    private function store($imageUrl, \DateTimeInterface $date)
+    private function formatFileName(\DateTimeInterface $date, &$path = '', &$fileName = '')
     {
         $day  = $date->format('N');
         $year = $date->format('Y');
@@ -118,10 +125,30 @@ class Downloader extends AbstractDownloader
 
         $path     = 'downloaded/dilbert/'.$category.'/'.$year.'/';
         $fileName = $date->format('Y-m-d').'.gif';
+    }
+
+    /**
+     * @param $imageUrl
+     * @param \DateTimeInterface $date
+     */
+    private function store($imageUrl, \DateTimeInterface $date)
+    {
+        $this->formatFileName($date, $path, $fileName);
 
         $this->filesystem->mkdir($path, 0777);
 
         $imageString = file_get_contents($imageUrl);
         file_put_contents($path.$fileName, $imageString);
+    }
+
+    /**
+     * @param \DateTimeInterface $date
+     * @return bool
+     */
+    private function exists(\DateTimeInterface $date)
+    {
+        $this->formatFileName($date, $path, $fileName);
+
+        return $this->filesystem->exists($path.$fileName);
     }
 }
