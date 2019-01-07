@@ -4,4 +4,6 @@ parameters:
     xkcd: App\Downloader\XKCD\Downloader
     maliki: App\Downloader\Maliki\Downloader
     commitstrip: App\Downloader\CommitStrip\Downloader
+    gantz: App\Downloader\Gantz\Downloader
+    naruto: App\Downloader\Naruto\Downloader
 
