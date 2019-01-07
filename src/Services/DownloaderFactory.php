@@ -4,6 +4,7 @@ namespace App\Services;
 use App\Downloader\AbstractDownloader;
 use App\Downloader\DownloaderInterface;
 use App\Downloader\DownloaderNotFoundException;
+use App\Downloader\UnknownDownloaderTypeException;
 use GuzzleHttp\Client;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
@@ -70,7 +71,7 @@ class DownloaderFactory
                 break;
 
             default:
-                throw new \UnexpectedValueException(sprintf('Downloader type unknown for %s', $class));
+                throw new UnknownDownloaderTypeException(sprintf('Bad downloader type for %s.', $class));
         }
     }
 }
