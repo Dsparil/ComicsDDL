@@ -7,3 +7,4 @@ parameters:
     gantz: App\Downloader\Gantz\Downloader
     naruto: App\Downloader\Naruto\Downloader
     fairy-tail: App\Downloader\FairyTail\Downloader
+    cyanide: App\Downloader\CyanideHappiness\Downloader
