@@ -75,12 +75,12 @@ class Model
         $this->news = $news;
     }
 
-    public function getSafe_title()
+    public function getSafeTitle()
     {
         return $this->safe_title;
     }
 
-    public function setSafe_title($safe_title)
+    public function setSafeTitle($safe_title)
     {
         $this->safe_title = $safe_title;
     }
@@ -115,19 +115,23 @@ class Model
         $this->img = $img;
     }
 
-    public function getTitle(){
-        return str_replace([' ', '/', '\\', '<', '>', '"', '#', ':'], '_', $this->title);
+    public function getTitle()
+    {
+        return $this->title;
     }
 
-    public function setTitle($title){
+    public function setTitle($title)
+    {
         $this->title = $title;
     }
 
-    public function getDay(){
+    public function getDay()
+    {
         return $this->day;
     }
 
-    public function setDay($day){
+    public function setDay($day)
+    {
         $this->day = $day;
     }
 }
