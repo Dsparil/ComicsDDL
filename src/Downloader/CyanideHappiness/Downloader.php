@@ -8,8 +8,6 @@ class Downloader extends AbstractHtmlDownloader
 {
     const URL = 'http://explosm.net/';
 
-    const OLDEST_DATE = '1989-04-16';
-
     public function setBoundaries($boundaryStart, $boundaryEnd)
     {
         return true;
