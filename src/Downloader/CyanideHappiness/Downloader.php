@@ -36,25 +36,14 @@ class Downloader extends AbstractHtmlDownloader
             $result = $this->client->request('GET', $url);
 
             $this->loadHtml($result->getBody());
-            $imageList      = $this->xPathQuery("//img[@id='main-comic']");
-            $prevLinkList   = $this->xPathQuery("//a[contains(@class, 'nav-previous')]");
-            $commentBtnList = $this->xPathQuery("//button[@id='comic-comment-button']");
-            $authorList     = $this->xPathQuery("//div[@id='comic-author']");
+            $imageList   = $this->xPathQuery("//img[@id='main-comic']");
+            $stripNumber = $this->getStripNumber();
 
-            // Get date
-            $dateText = $authorList->item(0)->childNodes->item(0)->wholeText;
-            preg_match('/([\d]{4}\.[\d]{2}\.[\d]{2})/', $dateText, $matches);
-            $dateStr = str_replace('.', '-', $matches[1]);
-
-            // Get comic number
-            $slug = $commentBtnList->item(0)->getAttribute('data-slug');
-            $comicNumber = substr($slug, strpos($slug, '-') + 1);
-
-            $this->output->write('Found number '.$comicNumber.'... ');
+            $this->output->write('Found number '.$stripNumber.'... ');
 
             $criteria = [
-                'date'   => $dateStr,
-                'number' => $comicNumber
+                'date'   => $this->getDate(),
+                'number' => $stripNumber
             ];
 
             if ($this->exists($criteria))
@@ -72,10 +61,7 @@ class Downloader extends AbstractHtmlDownloader
                 $this->output->writeln('Strip not found.');
             }
 
-            if ($prevLinkList->length > 0)
-            {
-                $prevLink = self::URL.$prevLinkList->item(0)->getAttribute('href');
-            }
+            $prevLink = $this->getPreviousLink();
         }
         catch (GuzzleException $e)
         {
@@ -87,6 +73,64 @@ class Downloader extends AbstractHtmlDownloader
         {
             $this->getStrip($prevLink);
         }
+    }
+
+    /**
+     * @return string
+     */
+    private function getDate()
+    {
+        // Search "author" div where there is current strip's date.
+        $authorList = $this->xPathQuery("//div[@id='comic-author']");
+
+        if ($authorList->length == 0)
+        {
+            throw new \UnexpectedValueException('Unable to find author DIV.');
+        }
+
+        // This div's first child contains the date with additional characters.
+        try
+        {
+            $dateText = $authorList->item(0)->childNodes->item(0)->wholeText;
+            preg_match('/([\d]{4}\.[\d]{2}\.[\d]{2})/', $dateText, $matches);
+            return str_replace('.', '-', $matches[1]);
+        }
+        catch (\Exception $e)
+        {
+            return '';
+        }
+    }
+
+    /**
+     * @return string
+     */
+    private function getStripNumber()
+    {
+        $commentBtnList = $this->xPathQuery("//button[@id='comic-comment-button']");
+
+        if ($commentBtnList->length == 0)
+        {
+            throw new \UnexpectedValueException('Unable to find strip number.');
+        }
+
+        $slug = $commentBtnList->item(0)->getAttribute('data-slug');
+        return substr($slug, strpos($slug, '-') + 1);
+    }
+
+    /**
+     * @return string
+     */
+    private function getPreviousLink()
+    {
+        $prevLink     = '';
+        $prevLinkList = $this->xPathQuery("//a[contains(@class, 'nav-previous')]");
+
+        if ($prevLinkList->length > 0)
+        {
+            $prevLink = self::URL.$prevLinkList->item(0)->getAttribute('href');
+        }
+
+        return $prevLink;
     }
 
     /**
