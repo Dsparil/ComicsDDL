@@ -2,6 +2,7 @@
 namespace App\Services;
 
 use App\Downloader\AbstractDownloader;
+use App\Downloader\DownloaderInterface;
 use App\Downloader\DownloaderNotFoundException;
 use GuzzleHttp\Client;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -37,11 +38,29 @@ class DownloaderFactory
             throw new DownloaderNotFoundException(sprintf('Downloader for %s is not implemented.', $downloaderName));
         }
 
+        /** @var DownloaderInterface $class */
         $class = $this->downloaderList[$downloaderName];
 
-        switch ($downloaderName)
+        switch ($class::DOWNLOADER_TYPE)
         {
-            case 'xkcd':
+            case DownloaderInterface::DOWNLOADER_TYPE_NONE:
+                return new $class(
+                    new Client(),
+                    $output,
+                    new Filesystem()
+                );
+                break;
+
+            case DownloaderInterface::DOWNLOADER_TYPE_HTML:
+                return new $class(
+                    new Client(),
+                    $output,
+                    new Filesystem(),
+                    new \DOMDocument()
+                );
+                break;
+
+            case DownloaderInterface::DOWNLOADER_TYPE_JSON_API:
                 return new $class(
                     new Client(),
                     $output,
@@ -49,12 +68,9 @@ class DownloaderFactory
                     new Serializer([new ObjectNormalizer()], [new JsonDecode(), new JsonEncoder()])
                 );
                 break;
+
             default:
-                return new $class(
-                    new Client(),
-                    $output,
-                    new Filesystem()
-                );
+                throw new \UnexpectedValueException(sprintf('Downloader type unknown for %s', $class));
         }
     }
 }

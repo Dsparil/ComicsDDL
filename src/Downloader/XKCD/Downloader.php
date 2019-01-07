@@ -1,15 +1,11 @@
 <?php
 namespace App\Downloader\XKCD;
 
-use App\Downloader\AbstractDownloader;
+use App\Downloader\AbstractJsonAPIDownloader;
 use App\Traits\NumberBoundariesTrait;
-use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Serializer\SerializerInterface;
 
-class Downloader extends AbstractDownloader
+class Downloader extends AbstractJsonAPIDownloader
 {
     use NumberBoundariesTrait;
 
@@ -18,25 +14,6 @@ class Downloader extends AbstractDownloader
     const URL_MASK = 'http://xkcd.com/%d/info.0.json';
 
     const OLDEST_NUMBER = 1;
-
-    /** @var SerializerInterface */
-    private $serializer;
-
-    /**
-     * @param Client $client
-     * @param OutputInterface $output
-     * @param Filesystem $filesystem
-     * @param SerializerInterface $serializer
-     */
-    public function __construct(
-        Client $client,
-        OutputInterface $output,
-        Filesystem $filesystem,
-        SerializerInterface $serializer
-    ) {
-        $this->serializer = $serializer;
-        parent::__construct($client, $output, $filesystem);
-    }
 
     public function setBoundaries($boundaryStart, $boundaryEnd)
     {

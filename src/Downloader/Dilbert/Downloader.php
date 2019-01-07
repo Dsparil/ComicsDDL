@@ -1,11 +1,11 @@
 <?php
 namespace App\Downloader\Dilbert;
 
-use App\Downloader\AbstractDownloader;
+use App\Downloader\AbstractHtmlDownloader;
 use App\Traits\DateBoundariesTrait;
 use GuzzleHttp\Exception\GuzzleException;
 
-class Downloader extends AbstractDownloader
+class Downloader extends AbstractHtmlDownloader
 {
     use DateBoundariesTrait;
 
@@ -67,13 +67,8 @@ class Downloader extends AbstractDownloader
             $url    = sprintf('%s/%s', self::URL, $date->format('Y-m-d'));
             $result = $this->client->request('GET', $url);
 
-            $html = $result->getBody();
-
-            $hDom = new \DOMDocument();
-            // Mute errors while parsing clumsy (but still exploitable) HTML.
-            @$hDom->loadHTML($html);
-            $hXpath   = new \DOMXPath($hDom);
-            $elements = $hXpath->query("//img[contains(@class, 'img-comic')]");
+            $this->loadHtml($result->getBody());
+            $elements = $this->xPathQuery("//img[contains(@class, 'img-comic')]");
 
             if ($elements->length == 1)
             {

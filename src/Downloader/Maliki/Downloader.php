@@ -1,11 +1,10 @@
 <?php
 namespace App\Downloader\Maliki;
 
-use App\Downloader\AbstractDownloader;
-use App\Downloader\Traits\DateBoundariesTrait;
+use App\Downloader\AbstractHtmlDownloader;
 use GuzzleHttp\Exception\GuzzleException;
 
-class Downloader extends AbstractDownloader
+class Downloader extends AbstractHtmlDownloader
 {
     const URL = 'https://maliki.com/strips/';
 
@@ -42,13 +41,10 @@ class Downloader extends AbstractDownloader
         try
         {
             $result = $this->client->request('GET', sprintf('%spage/%d', self::URL, $page));
-            $html   = $result->getBody();
 
-            $hDom = new \DOMDocument();
             // Mute errors while parsing clumsy (but still exploitable) HTML.
-            @$hDom->loadHTML($html);
-            $hXpath   = new \DOMXPath($hDom);
-            $elements = $hXpath->query("//div[@class='stripItem']");
+            $this->loadHtml($result->getBody());
+            $elements = $this->xPathQuery("//div[@class='stripItem']");
 
             $elementsCount = $elements->length;
 
@@ -116,13 +112,8 @@ class Downloader extends AbstractDownloader
         {
             $result = $this->client->request('GET', $stripInfo['url']);
 
-            $html = $result->getBody();
-
-            $hDom = new \DOMDocument();
-            // Mute errors while parsing clumsy (but still exploitable) HTML.
-            @$hDom->loadHTML($html);
-            $hXpath   = new \DOMXPath($hDom);
-            $elements = $hXpath->query("//img[@class='center-block img-responsive']");
+            $this->loadHtml($result->getBody());
+            $elements = $this->xPathQuery("//img[@class='center-block img-responsive']");
 
             if ($elements->length == 1)
             {
