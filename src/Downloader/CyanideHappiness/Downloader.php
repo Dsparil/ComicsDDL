@@ -65,7 +65,13 @@ class Downloader extends AbstractHtmlDownloader
             elseif ($imageList->length == 1)
             {
                 $image = $imageList->item(0);
-                $this->store($criteria, 'http:'.$image->getAttribute('src'));
+                $src   = $image->getAttribute('src');
+                // Some strips have it, some don't...
+                if (strpos($src, 'http:') === false)
+                {
+                    $src = 'http:'.$src;
+                }
+                $this->store($criteria, $src);
                 $this->output->writeln('OK.');
             }
             else
