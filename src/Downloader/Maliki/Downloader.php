@@ -79,7 +79,6 @@ class Downloader extends AbstractHtmlDownloader
         }
         catch (GuzzleException $e)
         {
-            echo $e->getMessage();
             $this->output->write('Request error ('.$e->getMessage().')', true);
         }
 
