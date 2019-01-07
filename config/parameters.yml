@@ -3,4 +3,5 @@ parameters:
     dilbert: App\Downloader\Dilbert\Downloader
     xkcd: App\Downloader\XKCD\Downloader
     maliki: App\Downloader\Maliki\Downloader
+    commitstrip: App\Downloader\CommitStrip\Downloader
 
