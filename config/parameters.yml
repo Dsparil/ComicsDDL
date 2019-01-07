@@ -6,4 +6,4 @@ parameters:
     commitstrip: App\Downloader\CommitStrip\Downloader
     gantz: App\Downloader\Gantz\Downloader
     naruto: App\Downloader\Naruto\Downloader
-
+    fairy-tail: App\Downloader\FairyTail\Downloader
