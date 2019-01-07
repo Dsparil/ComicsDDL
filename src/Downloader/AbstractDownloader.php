@@ -43,7 +43,11 @@ abstract class AbstractDownloader implements DownloaderInterface
         $this->filesystem->mkdir($path, 0777);
 
         $imageString = file_get_contents($url);
-        file_put_contents($path.$fileName, $imageString);
+
+        if (!empty($imageString))
+        {
+            file_put_contents($path.$fileName, $imageString);
+        }
     }
 
     /**
