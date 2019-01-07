@@ -101,7 +101,12 @@ class Downloader extends AbstractDownloader
     {
         $this->output->write('Processing strip '.$slug.'...');
 
-        if ($this->exists($stripInfo['date'], $slug))
+        $criteria = [
+            'date' => $stripInfo['date'],
+            'slug' => $slug
+        ];
+
+        if ($this->exists($criteria))
         {
             $this->output->write('Skipped !', true);
             return;
@@ -121,15 +126,16 @@ class Downloader extends AbstractDownloader
 
             if ($elements->length == 1)
             {
-                $this->store($stripInfo['date'], $slug, $elements->item(0)->getAttribute('src'));
+                $this->store($criteria, $elements->item(0)->getAttribute('src'));
                 $this->output->write(' Single image strip.', true);
             }
             elseif ($elements->length > 1)
             {
                 for ($idx = 0 ; $idx < $elements->length ; $idx++)
                 {
-                    $mgSrc = $elements->item($idx)->getAttribute('src');
-                    $this->store($stripInfo['date'], $slug, $mgSrc, $idx + 1);
+                    $criteria['imageNumber'] = $idx + 1;
+                    $imgSrc = $elements->item($idx)->getAttribute('src');
+                    $this->store($criteria, $imgSrc);
                     $this->output->write('.');
                 }
                 $this->output->write(' Multi-image strip.', true);
@@ -147,17 +153,13 @@ class Downloader extends AbstractDownloader
     }
 
     /**
-     * @param $date
-     * @param $slug
-     * @param string $path
-     * @param string $fileName
-     * @param int|null $imageNumber
+     * {@inheritdoc}
      */
-    private function formatFileName($date, $slug, &$path = '', &$fileName = '', $imageNumber = null)
+    public function formatFileName(array $criteria, &$path = '', &$fileName = '')
     {
-        if (!empty($date))
+        if (!empty($criteria['date']))
         {
-            $stripDate = new \DateTime($date);
+            $stripDate = new \DateTime($criteria['date']);
             $year      = $stripDate->format('Y');
             $dateStr   = $stripDate->format('Y-m-d');
         }
@@ -169,49 +171,29 @@ class Downloader extends AbstractDownloader
 
         $path = 'downloaded/maliki/'.$year.'/';
 
-        if ($imageNumber !== null)
+        if (array_key_exists('imageNumber', $criteria))
         {
-            $path    .= $dateStr.' - '.$slug.'/';
-            $fileName = $dateStr.' - '.$slug.' - '.$imageNumber.'.jpg';
+            $path    .= $dateStr.' - '.$criteria['slug'].'/';
+            $fileName = $dateStr.' - '.$criteria['slug'].' - '.$criteria['imageNumber'].'.jpg';
         }
         else
         {
-            $fileName = $dateStr.' - '.$slug.'.jpg';
+            $fileName = $dateStr.' - '.$criteria['slug'].'.jpg';
         }
     }
 
     /**
-     * @param $date
-     * @param $slug
-     * @param $imageUrl
-     * @param null $imageNumber
+     * {@inheritdoc}
      */
-    private function store($date, $slug, $imageUrl, $imageNumber = null)
+    protected function exists(array $criteria)
     {
-        $this->formatFileName($date, $slug, $path, $fileName, $imageNumber);
-
-        $this->filesystem->mkdir($path, 0777);
-
-        $imageString = file_get_contents($imageUrl);
-        file_put_contents($path.$fileName, $imageString);
-    }
-
-    /**
-     * @param $date
-     * @param $slug
-     * @return bool
-     */
-    private function exists($date, $slug)
-    {
-        $this->formatFileName($date, $slug, $path, $fileName);
-
-        if ($this->filesystem->exists($path.$fileName))
+        if (parent::exists($criteria))
         {
             return true;
         }
 
-        $this->formatFileName($date, $slug, $path, $fileName, 1);
+        $criteria['imageNumber'] = 1;
 
-        return $this->filesystem->exists($path.$fileName);
+        return parent::exists($criteria);
     }
 }

@@ -31,4 +31,29 @@ abstract class AbstractDownloader implements DownloaderInterface
         $this->output     = $output;
         $this->filesystem = $filesystem;
     }
+
+    /**
+     * @param array $criteria
+     * @param $url
+     */
+    protected function store(array $criteria, $url)
+    {
+        $this->formatFileName($criteria, $path, $fileName);
+
+        $this->filesystem->mkdir($path, 0777);
+
+        $imageString = file_get_contents($url);
+        file_put_contents($path.$fileName, $imageString);
+    }
+
+    /**
+     * @param array $criteria
+     * @return bool
+     */
+    protected function exists(array $criteria)
+    {
+        $this->formatFileName($criteria, $path, $fileName);
+
+        return $this->filesystem->exists($path.$fileName);
+    }
 }

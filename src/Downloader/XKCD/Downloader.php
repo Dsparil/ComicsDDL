@@ -85,18 +85,19 @@ class Downloader extends AbstractDownloader
             /** @var Model $response */
             $response = $this->serializer->deserialize($result->getBody(), Model::class, 'json');
 
-            if ($this->exists($response->getYear(), $response->getTitle(), $number))
+            $criteria = [
+                'year'   => (int) $response->getYear(),
+                'title'  => $response->getSafeTitle(),
+                'number' => $number
+            ];
+
+            if ($this->exists($criteria))
             {
                 $this->output->write('Skipped.', true);
                 return;
             }
 
-            $this->store(
-                $response->getImg(),
-                (int) $response->getYear(),
-                $response->getTitle(),
-                $number
-            );
+            $this->store($criteria, $response->getImg());
 
             $this->output->write('OK.', true);
         }
@@ -108,45 +109,12 @@ class Downloader extends AbstractDownloader
     }
 
     /**
-     * @param $year
-     * @param $title
-     * @param $number
-     * @param string $path
-     * @param string $fileName
+     * {@inheritdoc}
      */
-    private function formatFileName($year, $title, $number, &$path = '', &$fileName = '')
+    public function formatFileName(array $criteria, &$path = '', &$fileName = '')
     {
-        $path     = 'downloaded/xkcd/'.$year.'/';
-        $fileName = $number.'-'.$title.'.png';
-    }
-
-    /**
-     * @param string $imageUrl
-     * @param int $year
-     * @param string $title
-     * @param int $number
-     */
-    private function store($imageUrl, $year, $title, $number)
-    {
-        $this->formatFileName($year, $title, $number, $path, $fileName);
-
-        $this->filesystem->mkdir($path, 0777);
-
-        $imageString = file_get_contents($imageUrl);
-        file_put_contents($path.$fileName, $imageString);
-    }
-
-    /**
-     * @param $year
-     * @param $title
-     * @param $number
-     * @return bool
-     */
-    private function exists($year, $title, $number)
-    {
-        $this->formatFileName($year, $title, $number, $path, $fileName);
-
-        return $this->filesystem->exists($path.$fileName);
+        $path     = 'downloaded/xkcd/'.$criteria['year'].'/';
+        $fileName = $criteria['number'].'-'.$criteria['title'].'.png';
     }
 
     /**
