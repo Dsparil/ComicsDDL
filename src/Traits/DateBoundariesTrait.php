@@ -1,5 +1,5 @@
 <?php
-namespace App\Downloader\Traits;
+namespace App\Traits;
 
 trait DateBoundariesTrait
 {

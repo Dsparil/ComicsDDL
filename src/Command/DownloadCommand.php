@@ -1,7 +1,7 @@
 <?php
 namespace App\Command;
 
-use App\Downloader\Services\Factory;
+use App\Services\DownloaderFactory;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -12,13 +12,13 @@ class DownloadCommand extends Command
 {
     protected static $defaultName = 'app:download';
 
-    /** @var Factory */
+    /** @var DownloaderFactory */
     private $downloaderFactory;
 
     /**
-     * @param Factory $downloaderFactory
+     * @param DownloaderFactory $downloaderFactory
      */
-    public function __construct(Factory $downloaderFactory)
+    public function __construct(DownloaderFactory $downloaderFactory)
     {
         $this->downloaderFactory = $downloaderFactory;
 

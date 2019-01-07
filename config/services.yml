@@ -3,7 +3,7 @@ imports:
 
 services:
   downloader.factory:
-    class: App\Downloader\Services\Factory
+    class: App\Services\DownloaderFactory
     arguments:
       - '%downloader_list%'
 

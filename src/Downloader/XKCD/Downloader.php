@@ -2,8 +2,7 @@
 namespace App\Downloader\XKCD;
 
 use App\Downloader\AbstractDownloader;
-use App\Downloader\Traits\DateBoundariesTrait;
-use App\Downloader\Traits\NumberBoundariesTrait;
+use App\Traits\NumberBoundariesTrait;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Symfony\Component\Console\Output\OutputInterface;

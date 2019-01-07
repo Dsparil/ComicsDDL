@@ -1,5 +1,5 @@
 <?php
-namespace App\Downloader\Services;
+namespace App\Services;
 
 use App\Downloader\AbstractDownloader;
 use App\Downloader\DownloaderNotFoundException;
@@ -11,7 +11,7 @@ use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 
-class Factory
+class DownloaderFactory
 {
     /** @var array */
     private $downloaderList;
@@ -42,10 +42,19 @@ class Factory
         switch ($downloaderName)
         {
             case 'xkcd':
-                return new $class(new Client(), $output, new Filesystem(), new Serializer([new ObjectNormalizer()], [new JsonDecode(), new JsonEncoder()]));
+                return new $class(
+                    new Client(),
+                    $output,
+                    new Filesystem(),
+                    new Serializer([new ObjectNormalizer()], [new JsonDecode(), new JsonEncoder()])
+                );
                 break;
             default:
-                return new $class(new Client(), $output, new Filesystem());
+                return new $class(
+                    new Client(),
+                    $output,
+                    new Filesystem()
+                );
         }
     }
 }

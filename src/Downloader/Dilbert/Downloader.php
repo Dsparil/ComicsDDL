@@ -2,7 +2,7 @@
 namespace App\Downloader\Dilbert;
 
 use App\Downloader\AbstractDownloader;
-use App\Downloader\Traits\DateBoundariesTrait;
+use App\Traits\DateBoundariesTrait;
 use GuzzleHttp\Exception\GuzzleException;
 
 class Downloader extends AbstractDownloader
