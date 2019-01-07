@@ -43,7 +43,7 @@ class Downloader extends AbstractHtmlDownloader
             $result = $this->client->request('GET', sprintf('%spage/%d', self::URL, $page));
 
             $this->loadHtml($result->getBody());
-            $elements = $this->xPathQuery("//div[@class='excerpt']");
+            $elements = $this->xPathQuery("//div[@class='excerpt']/section/a");
 
             $elementsCount = $elements->length;
 
@@ -52,7 +52,7 @@ class Downloader extends AbstractHtmlDownloader
                 $element = $elements->item($idx);
                 try
                 {
-                    $link = $element->childNodes->item(1)->childNodes->item(1)->getAttribute('href');
+                    $link = $element->getAttribute('href');
 
                     $slugAndDate = substr($link, strlen(self::URL));
 
