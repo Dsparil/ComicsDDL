@@ -101,17 +101,7 @@ class Downloader extends AbstractDownloader
     {
         $this->output->write('Processing strip '.$slug.'...');
 
-        if (!empty($stripInfo['date']))
-        {
-            $stripDate = new \DateTime($stripInfo['date']);
-            $year      = $stripDate->format('Y');
-        }
-        else
-        {
-            $year = 'undefined';
-        }
-
-        if ($this->exists($year, $slug))
+        if ($this->exists($stripInfo['date'], $slug))
         {
             $this->output->write('Skipped !', true);
             return;
@@ -131,7 +121,7 @@ class Downloader extends AbstractDownloader
 
             if ($elements->length == 1)
             {
-                $this->store($year, $slug, $elements->item(0)->getAttribute('src'));
+                $this->store($stripInfo['date'], $slug, $elements->item(0)->getAttribute('src'));
                 $this->output->write(' Single image strip.', true);
             }
             elseif ($elements->length > 1)
@@ -139,7 +129,7 @@ class Downloader extends AbstractDownloader
                 for ($idx = 0 ; $idx < $elements->length ; $idx++)
                 {
                     $mgSrc = $elements->item($idx)->getAttribute('src');
-                    $this->store($year, $slug, $mgSrc, $idx + 1);
+                    $this->store($stripInfo['date'], $slug, $mgSrc, $idx + 1);
                     $this->output->write('.');
                 }
                 $this->output->write(' Multi-image strip.', true);
@@ -157,36 +147,48 @@ class Downloader extends AbstractDownloader
     }
 
     /**
-     * @param $year
+     * @param $date
      * @param $slug
      * @param string $path
      * @param string $fileName
      * @param int|null $imageNumber
      */
-    private function formatFileName($year, $slug, &$path = '', &$fileName = '', $imageNumber = null)
+    private function formatFileName($date, $slug, &$path = '', &$fileName = '', $imageNumber = null)
     {
-        $path     = 'downloaded/maliki/'.$year.'/';
-
-        if ($imageNumber !== null)
+        if (!empty($date))
         {
-            $path    .= $slug.'/';
-            $fileName = $slug.' - '.$imageNumber.'.jpg';
+            $stripDate = new \DateTime($date);
+            $year      = $stripDate->format('Y');
+            $dateStr   = $stripDate->format('Y-m-d');
         }
         else
         {
-            $fileName = $slug.'.jpg';
+            $year    = 'undefined';
+            $dateStr = 'undefined';
+        }
+
+        $path = 'downloaded/maliki/'.$year.'/';
+
+        if ($imageNumber !== null)
+        {
+            $path    .= $dateStr.' - '.$slug.'/';
+            $fileName = $dateStr.' - '.$slug.' - '.$imageNumber.'.jpg';
+        }
+        else
+        {
+            $fileName = $dateStr.' - '.$slug.'.jpg';
         }
     }
 
     /**
-     * @param $year
+     * @param $date
      * @param $slug
      * @param $imageUrl
      * @param null $imageNumber
      */
-    private function store($year, $slug, $imageUrl, $imageNumber = null)
+    private function store($date, $slug, $imageUrl, $imageNumber = null)
     {
-        $this->formatFileName($year, $slug, $path, $fileName, $imageNumber);
+        $this->formatFileName($date, $slug, $path, $fileName, $imageNumber);
 
         $this->filesystem->mkdir($path, 0777);
 
@@ -195,20 +197,20 @@ class Downloader extends AbstractDownloader
     }
 
     /**
-     * @param $year
+     * @param $date
      * @param $slug
      * @return bool
      */
-    private function exists($year, $slug)
+    private function exists($date, $slug)
     {
-        $this->formatFileName($year, $slug, $path, $fileName);
+        $this->formatFileName($date, $slug, $path, $fileName);
 
         if ($this->filesystem->exists($path.$fileName))
         {
             return true;
         }
 
-        $this->formatFileName($year, $slug, $path, $fileName, 1);
+        $this->formatFileName($date, $slug, $path, $fileName, 1);
 
         return $this->filesystem->exists($path.$fileName);
     }
