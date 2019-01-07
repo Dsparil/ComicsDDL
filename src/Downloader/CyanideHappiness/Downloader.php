@@ -10,7 +10,12 @@ class Downloader extends AbstractHtmlDownloader
 
     public function setBoundaries($boundaryStart, $boundaryEnd)
     {
-        return true;
+        if (!empty($boundaryStart) && !is_numeric($boundaryStart))
+        {
+            throw new \InvalidArgumentException('Starting number must be numeric.');
+        }
+
+        $this->boundaryStart = (int)$boundaryStart;
     }
 
     /**
@@ -18,7 +23,16 @@ class Downloader extends AbstractHtmlDownloader
      */
     public function process()
     {
-        $this->getStrip(self::URL);
+        if (!empty($this->boundaryStart))
+        {
+            $url = self::URL.'comics/'.$this->boundaryStart.'/';
+        }
+        else
+        {
+            $url = self::URL;
+        }
+
+        $this->getStrip($url);
     }
 
     /**
