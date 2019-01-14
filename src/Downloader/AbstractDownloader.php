@@ -7,6 +7,14 @@ use Symfony\Component\Filesystem\Filesystem;
 
 abstract class AbstractDownloader implements DownloaderInterface
 {
+    protected $mimeTypes = [
+        'image/gif'  => '.gif',
+        'image/png'  => '.png',
+        'image/jpeg' => '.jpg',
+        'image/bmp'  => '.bmp',
+        'image/tiff' => '.tiff',
+    ];
+
     /** @var Client */
     protected $client;
 
@@ -44,10 +52,28 @@ abstract class AbstractDownloader implements DownloaderInterface
 
         $imageString = file_get_contents($url);
 
-        if (!empty($imageString))
+        if (empty($imageString))
         {
-            file_put_contents($path.$fileName, $imageString);
+            $this->output->writeln('<error>No data...</error>');
+            return;
         }
+
+        $fInfo = new \finfo(FILEINFO_MIME);
+        $info  = $fInfo->buffer($imageString);
+        $mime  = substr($info, 0, strpos($info, ';'));
+
+        foreach ($this->mimeTypes as $mimeType => $extension)
+        {
+            if ($mime == $mimeType)
+            {
+                $fileName .= $extension;
+                file_put_contents($path.$fileName, $imageString);
+                return;
+            }
+        }
+
+        $this->output->writeln('<error>MIME error.</error>');
+        return;
     }
 
     /**
@@ -58,6 +84,14 @@ abstract class AbstractDownloader implements DownloaderInterface
     {
         $this->formatFileName($criteria, $path, $fileName);
 
-        return $this->filesystem->exists($path.$fileName);
+        foreach ($this->mimeTypes as $extension)
+        {
+            if ($this->filesystem->exists($path.$fileName.$extension))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

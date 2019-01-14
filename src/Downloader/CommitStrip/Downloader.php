@@ -147,6 +147,6 @@ class Downloader extends AbstractHtmlDownloader
         }
 
         $path     = 'downloaded/commitstrip/'.$year.'/';
-        $fileName = $dateStr.' - '.$criteria['slug'].'.jpg';
+        $fileName = $dateStr.' - '.$criteria['slug'];
     }
 }

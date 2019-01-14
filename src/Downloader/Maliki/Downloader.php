@@ -164,11 +164,11 @@ class Downloader extends AbstractHtmlDownloader
         if (array_key_exists('imageNumber', $criteria))
         {
             $path    .= $dateStr.' - '.$criteria['slug'].'/';
-            $fileName = $dateStr.' - '.$criteria['slug'].' - '.$criteria['imageNumber'].'.jpg';
+            $fileName = $dateStr.' - '.$criteria['slug'].' - '.$criteria['imageNumber'];
         }
         else
         {
-            $fileName = $dateStr.' - '.$criteria['slug'].'.jpg';
+            $fileName = $dateStr.' - '.$criteria['slug'];
         }
     }
 

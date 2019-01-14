@@ -90,7 +90,7 @@ class Downloader extends AbstractJsonAPIDownloader
     public function formatFileName(array $criteria, &$path = '', &$fileName = '')
     {
         $path     = 'downloaded/xkcd/'.$criteria['year'].'/';
-        $fileName = $criteria['number'].'-'.$criteria['title'].'.png';
+        $fileName = $criteria['number'].'-'.$criteria['title'];
     }
 
     /**

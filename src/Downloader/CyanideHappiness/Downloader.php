@@ -170,6 +170,6 @@ class Downloader extends AbstractHtmlDownloader
         }
 
         $path     = 'downloaded/cyanide-happiness/'.$year.'/';
-        $fileName = $criteria['number'].'.png';
+        $fileName = $criteria['number'];
     }
 }

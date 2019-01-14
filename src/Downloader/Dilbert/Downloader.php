@@ -125,6 +125,6 @@ class Downloader extends AbstractHtmlDownloader
         }
 
         $path     = 'downloaded/dilbert/'.$category.'/'.$year.'/';
-        $fileName = $date->format('Y-m-d').'.gif';
+        $fileName = $date->format('Y-m-d');
     }
 }

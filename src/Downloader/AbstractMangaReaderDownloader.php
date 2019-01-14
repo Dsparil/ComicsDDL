@@ -96,11 +96,10 @@ abstract class AbstractMangaReaderDownloader extends AbstractHtmlDownloader
      */
     public function formatFileName(array $criteria, &$path = '', &$fileName = '')
     {
-        $chapter  = str_pad($criteria['chapter'], 4, '0', STR_PAD_LEFT);
-        $page     = str_pad($criteria['page'],    3, '0', STR_PAD_LEFT);
-        $ext      = pathinfo($criteria['url'], PATHINFO_EXTENSION);
+        $chapter = str_pad($criteria['chapter'], 4, '0', STR_PAD_LEFT);
+        $page    = str_pad($criteria['page'],    3, '0', STR_PAD_LEFT);
 
         $path     = 'downloaded/'.$this->mangaName.'/Chapter '.$chapter.'/';
-        $fileName = $this->mangaName.' - '.$chapter.' - '.$page.'.'.$ext;
+        $fileName = $this->mangaName.' - '.$chapter.' - '.$page;
     }
 }
