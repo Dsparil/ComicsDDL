@@ -7,13 +7,8 @@ use Symfony\Component\Filesystem\Filesystem;
 
 abstract class AbstractDownloader implements DownloaderInterface
 {
-    protected $mimeTypes = [
-        'image/gif'  => '.gif',
-        'image/png'  => '.png',
-        'image/jpeg' => '.jpg',
-        'image/bmp'  => '.bmp',
-        'image/tiff' => '.tiff',
-    ];
+    /** @var array */
+    protected $mimeTypes;
 
     /** @var Client */
     protected $client;
@@ -29,15 +24,17 @@ abstract class AbstractDownloader implements DownloaderInterface
     protected $boundaryEnd;
 
     /**
-     * @param Client $client
+     * @param Client          $client
      * @param OutputInterface $output
-     * @param Filesystem $filesystem
+     * @param Filesystem      $filesystem
+     * @param array           $mimeTypes
      */
-    public function __construct(Client $client, OutputInterface $output, Filesystem $filesystem)
+    public function __construct(Client $client, OutputInterface $output, Filesystem $filesystem, array $mimeTypes)
     {
         $this->client     = $client;
         $this->output     = $output;
         $this->filesystem = $filesystem;
+        $this->mimeTypes  = $mimeTypes;
     }
 
     /**

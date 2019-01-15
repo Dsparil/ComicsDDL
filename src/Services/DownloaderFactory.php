@@ -18,12 +18,17 @@ class DownloaderFactory
     /** @var array */
     private $downloaderList;
 
+    /** @var array */
+    private $mimeTypeList;
+
     /**
      * @param array $downloaderList
+     * @param array $mimeTypeList
      */
-    public function __construct(array $downloaderList)
+    public function __construct(array $downloaderList, array $mimeTypeList)
     {
         $this->downloaderList = $downloaderList;
+        $this->mimeTypeList   = $mimeTypeList;
     }
 
     /**
@@ -48,7 +53,8 @@ class DownloaderFactory
                 return new $class(
                     new Client(),
                     $output,
-                    new Filesystem()
+                    new Filesystem(),
+                    $this->mimeTypeList
                 );
                 break;
 
@@ -57,6 +63,7 @@ class DownloaderFactory
                     new Client(),
                     $output,
                     new Filesystem(),
+                    $this->mimeTypeList,
                     new \DOMDocument()
                 );
                 break;
@@ -66,6 +73,7 @@ class DownloaderFactory
                     new Client(),
                     $output,
                     new Filesystem(),
+                    $this->mimeTypeList,
                     new Serializer([new ObjectNormalizer()], [new JsonDecode(), new JsonEncoder()])
                 );
                 break;

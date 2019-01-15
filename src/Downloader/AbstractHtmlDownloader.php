@@ -21,10 +21,11 @@ abstract class AbstractHtmlDownloader extends AbstractDownloader
         Client $client,
         OutputInterface $output,
         Filesystem $filesystem,
+        array $mimeTypes,
         \DOMDocument $domDocument
     ) {
         $this->domDocument = $domDocument;
-        parent::__construct($client, $output, $filesystem);
+        parent::__construct($client, $output, $filesystem, $mimeTypes);
     }
 
     /**

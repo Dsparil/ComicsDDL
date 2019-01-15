@@ -6,6 +6,7 @@ services:
     class: App\Services\DownloaderFactory
     arguments:
       - '%downloader_list%'
+      - '%mime_type_list%'
 
   command.download:
     class: App\Command\DownloadCommand

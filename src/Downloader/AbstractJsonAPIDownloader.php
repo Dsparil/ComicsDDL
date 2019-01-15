@@ -21,9 +21,10 @@ abstract class AbstractJsonAPIDownloader extends AbstractDownloader
         Client $client,
         OutputInterface $output,
         Filesystem $filesystem,
+        array $mimeTypes,
         SerializerInterface $serializer
     ) {
         $this->serializer = $serializer;
-        parent::__construct($client, $output, $filesystem);
+        parent::__construct($client, $output, $filesystem, $mimeTypes);
     }
 }

@@ -8,3 +8,9 @@ parameters:
     naruto: App\Downloader\Naruto\Downloader
     fairy-tail: App\Downloader\FairyTail\Downloader
     cyanide: App\Downloader\CyanideHappiness\Downloader
+  mime_type_list:
+    image/gif: .gif
+    image/png: .png
+    image/bmp: .bmp
+    image/jpeg: .jpg
+    image/tiff: .tiff
