@@ -41,7 +41,7 @@ class DownloaderFactory
     {
         if (!array_key_exists($downloaderName, $this->downloaderList))
         {
-            throw new DownloaderNotFoundException(sprintf('Downloader for %s is not implemented.', $downloaderName));
+            throw new DownloaderNotFoundException($downloaderName);
         }
 
         /** @var DownloaderInterface $class */
@@ -79,7 +79,7 @@ class DownloaderFactory
                 break;
 
             default:
-                throw new UnknownDownloaderTypeException(sprintf('Bad downloader type for %s.', $class));
+                throw new UnknownDownloaderTypeException($class);
         }
     }
 }
